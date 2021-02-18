@@ -1,0 +1,8 @@
+@echo off
+
+:loop
+for /f %%p in ('wmic cpu get loadpercentage') do curl -H "Content-type: application/json" -d {\"cpu":\"%%p"} localhost:8080/v1/save
+::curl -H "Content-type: application/json" -d {\"cpu":\"23"} localhost:8080/v1/save
+
+ timeout /t 5
+ goto loop
