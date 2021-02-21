@@ -1,98 +1,33 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title>Chat WebSocket</title>
-    <!--    <script src="resources/js/sockjs-0.3.4.js"></script>-->
-    <script type="text/javascript" src="https://unpkg.com/kd-shim-sockjs-client@0.3.4/sockjs-0.3.4.js"></script>
-    <!--    <script src="resources/js/stomp.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g==" crossorigin="anonymous"></script>
-    <script type="text/javascript">
-        var stompClient = null;
-
-        function setConnected(connected) {
-            document.getElementById('connect').disabled = connected;
-            document.getElementById('disconnect').disabled = !connected;
-            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
-            document.getElementById('response').innerHTML = '';
-        }
-
-        function connect() {
-            var p = document.createElement('p');
-            var socket = new SockJS('/chat');
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function(frame) {
-                setConnected(true);
-                console.log('Connected: ' + frame);
-                // stompClient.subscribe('/topic/messages', function(messageOutput) {
-                //     sendMessage()
-                //     showMessageOutput(JSON.parse(messageOutput.body));
-                // });
-            });
-        }
-
-        function disconnect() {
-            if (stompClient != null) {
-                stompClient.disconnect();
-            }
-            setConnected(false);
-            console.log("Disconnected");
-        }
-
-        function sendMessage() {
-            var from = document.getElementById('from').value;
-            var text = document.getElementById('text').value;
-            stompClient.send("/app/chat", {},
-                JSON.stringify({
-                    'from': from,
-                    'text': text
-                }));
-            stompClient.subscribe('/topic/messages', function(messageOutput) {
-                // sendMessage()
-                showMessageOutput(JSON.parse(messageOutput.body));
-            });
-        }
-
-        function showMessageOutput(messageOutput) {
-            var p = document.createElement('p');
-            var response = document.getElementById('response');
-            // var p = document.getElementsByTagName("p");
-            // var p = document.createElement('p');
-            // p.style.wordWrap = 'break-word';
-            // p.innerHTML = (document.createTextNode(messageOutput.from + ": " +
-            // messageOutput.text));
-            // alert(messageOutput.from + ": " +
-            //     messageOutput.text)
-            if (response.hasChildNodes()) {
-                response.removeChild(response.childNodes[0]);
-            }
-            var textResponce = document.createTextNode(messageOutput.from + ": " +
-                messageOutput.text);
-            p.appendChild(textResponce);
-            response.appendChild(p);
-        }
-    </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js" integrity="sha512-YHQNqPhxuCY2ddskIbDlZfwY6Vx3L3w9WRbyJCY81xpqLmrM6rL2+LocBgeVHwGY9SXYfQWJ+lcEWx1fKS2s8A==" crossorigin="anonymous"></script>
+    <title>Document</title>
 </head>
 
-<body onload="disconnect()">
-    <div>
-        <div>
-            <input type="text" id="from" placeholder="Choose a nickname" />
-        </div>
-        <br/>
-        <div>
-            <button id="connect" onclick="connect();">Connect</button>
-            <button id="disconnect" disabled="disabled" onclick="disconnect();">
-            Disconnect
-        </button>
-        </div>
-        <br/>
-        <div id="conversationDiv">
-            <input type="text" id="text" placeholder="Write a message..." />
-            <button id="sendMessage" onclick="sendMessage();">Send</button>
-            <p id="response"></p>
-        </div>
-    </div>
+<body>
+    <div id='root'></div>
 
+    <script>
+        var socket = new WebSocket('ws://' + window.location.host + '/my-websocket-endpoint');
+
+        // Add an event listener for when a connection is open
+        socket.onopen = function() {
+            console.log('WebSocket connection opened. Ready to send messages.');
+
+            // Send a message to the server
+            socket.send('Hello, from WebSocket client!');
+        };
+
+        // Add an event listener for when a message is received from the server
+        socket.onmessage = function(message) {
+            console.log('Message received from server: ' + message.data);
+        };
+    </script>
 </body>
 
 </html>
