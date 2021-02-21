@@ -15,7 +15,9 @@ import java.util.Map;
 @Component
 public class SocketTextHandler extends TextWebSocketHandler {
 
-    public static Map<String,WebSocketSession> webSocketSessionMap=new HashMap<>();
+    public static Map<String, WebSocketSession> webSocketSessionMap = new HashMap<>();
+//    int a=0;
+
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // The WebSocket has been closed
@@ -28,13 +30,13 @@ public class SocketTextHandler extends TextWebSocketHandler {
 
         // Let's send the first message
         session.sendMessage(new TextMessage("You are now connected to the server. This is the first message."));
-        webSocketSessionMap.put(session.getId(),session);
+//        webSocketSessionMap.put(session.getId(), session);
 //        int a = 0;
-//        for (; ; ) {
-//            Thread.sleep(1000);
+        for (; ; ) {
+            Thread.sleep(800);
 //            a += 1;
-//            session.sendMessage(new TextMessage("{\"cpu\":\"" + a + "\"}"));
-//        }
+            session.sendMessage(new TextMessage("{\"cpu\":\"" + App.a + "\"}"));
+        }
     }
 
     @Override
