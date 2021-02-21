@@ -5,13 +5,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.adapter.standard.StandardWebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class SocketTextHandler extends TextWebSocketHandler {
 
+    public static Map<String,WebSocketSession> webSocketSessionMap=new HashMap<>();
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // The WebSocket has been closed
@@ -24,12 +28,13 @@ public class SocketTextHandler extends TextWebSocketHandler {
 
         // Let's send the first message
         session.sendMessage(new TextMessage("You are now connected to the server. This is the first message."));
-        int a = 0;
-        for (; ; ) {
-            Thread.sleep(1000);
-            a += 1;
-            session.sendMessage(new TextMessage("{\"cpu\":\"" + a + "\"}"));
-        }
+        webSocketSessionMap.put(session.getId(),session);
+//        int a = 0;
+//        for (; ; ) {
+//            Thread.sleep(1000);
+//            a += 1;
+//            session.sendMessage(new TextMessage("{\"cpu\":\"" + a + "\"}"));
+//        }
     }
 
     @Override
